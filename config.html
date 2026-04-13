@@ -69,33 +69,28 @@
       } catch (e) { log('Load error: ' + e); }
     })();
 
-    document.getElementById('btn-save').addEventListener('click', function () {
-      var ip     = document.getElementById('ip').value.trim();
-      var apiKey = document.getElementById('key').value.trim();
+document.getElementById('btn-save').addEventListener('click', function () {
+  var ip     = document.getElementById('ip').value.trim();
+  var apiKey = document.getElementById('key').value.trim();
+  var payload = encodeURIComponent(JSON.stringify({ ip: ip, apiKey: apiKey }));
 
-      log('--- SAVE CLICKED ---');
-      log('ip: ' + ip);
-      log('apiKey: ' + apiKey);
+  var match = location.search.match(/[?&]return_to=([^&]*)/);
 
-      var payload = encodeURIComponent(JSON.stringify({ ip: ip, apiKey: apiKey }));
-      log('payload: ' + payload);
-
-      var match = location.search.match(/[?&]return_to=([^&]*)/);
-      log('return_to match: ' + (match ? match[1] : 'NOT FOUND'));
-
-      var target;
-      if (match) {
-        var returnTo = decodeURIComponent(match[1]).replace(/[?&]+$/, '');
-        var target = returnTo + '#' + payload;
-      } else {
-        target = 'pebblejs://close?' + payload;
-      }
-
-      log('Navigating to: ' + target);
-
-      // Small delay so the log is visible before navigation
-      setTimeout(function () { location.href = target; }, 600);
-    });
+  if (match) {
+    // Emulator: direkt via postMessage antworten, dann Fenster schließen
+    var returnTo = decodeURIComponent(match[1]).replace(/[?&]+$/, '');
+    
+    // CloudPebble erwartet die Antwort vom Opener
+    if (window.opener) {
+      window.opener.postMessage(payload, '*');
+    }
+    // Zusätzlich: via URL navigieren als Fallback
+    location.href = returnTo + '#' + payload;
+  } else {
+    // Echtes Gerät
+    location.href = 'pebblejs://close#' + payload;
+  }
+});
   </script>
 </body>
 </html>
