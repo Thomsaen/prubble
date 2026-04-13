@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-  <title>Prusa MK4+ Einstellungen</title>
+  <title>Prusa MK4+ Settings</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
@@ -29,20 +29,20 @@
   </style>
 </head>
 <body>
-  <div class="hdr"><h1>Prusa MK4+ Einstellungen</h1></div>
+  <div class="hdr"><h1>Prusa MK4+ Settings</h1></div>
   <p class="sec">Verbindung</p>
   <div class="card">
     <div class="row">
-      <label>IP-Adresse</label>
-      <input id="ip" type="text" inputmode="decimal" placeholder="192.168.178.100">
+      <label>IP-Address</label>
+      <input id="ip" type="text" inputmode="decimal" placeholder="192.168.1.1">
     </div>
     <div class="row">
       <label>API-Key</label>
-      <input id="key" type="text" placeholder="aus Druckermenü">
+      <input id="key" type="text" placeholder="from Printer">
     </div>
   </div>
-  <p class="hint">Drucker → Einstellungen → Netzwerk → PrusaLink</p>
-  <button class="btn" onclick="save()">Speichern</button>
+  <p class="hint">Prusa Printer → Settings → Network → PrusaLink</p>
+  <button class="btn" onclick="save()">Save</button>
 
   <script>
     // Gespeicherte Werte aus URL laden (werden von index.js als #hash übergeben)
