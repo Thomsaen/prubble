@@ -85,7 +85,8 @@
 
       var target;
       if (match) {
-        target = decodeURIComponent(match[1]) + '#' + payload;
+        var returnTo = decodeURIComponent(match[1]).replace(/[?&]+$/, '');
+        var target = returnTo + '#' + payload;
       } else {
         target = 'pebblejs://close#' + payload;
       }
