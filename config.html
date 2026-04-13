@@ -88,7 +88,7 @@
         var returnTo = decodeURIComponent(match[1]).replace(/[?&]+$/, '');
         var target = returnTo + '#' + payload;
       } else {
-        target = 'pebblejs://close#' + payload;
+        target = 'pebblejs://close?' + payload;
       }
 
       log('Navigating to: ' + target);
