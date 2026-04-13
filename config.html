@@ -128,37 +128,39 @@
     Settings → Network → PrusaLink
   </p>
 
-  <button class="btn-save" onclick="save()">Save</button>
+  <button id="btn-save">SAVE</button>
 
   <script>
-    (function() {
+    // Load existing settings from hash
+    (function () {
       var hash = location.hash.slice(1);
       if (!hash) return;
       try {
         var cfg = JSON.parse(decodeURIComponent(hash));
         if (cfg.ip)     document.getElementById('ip').value  = cfg.ip;
         if (cfg.apiKey) document.getElementById('key').value = cfg.apiKey;
-      } catch(e) {}
+      } catch (e) {
+        console.log('Config load error: ' + e);
+      }
     })();
 
-    function save() {
-      var ip  = document.getElementById('ip').value.trim();
-      var key = document.getElementById('key').value.trim();
+    // Attach save handler via addEventListener — avoids global scope issues
+    document.getElementById('btn-save').addEventListener('click', function () {
+      var ip     = document.getElementById('ip').value.trim();
+      var apiKey = document.getElementById('key').value.trim();
 
-      // Debug: Prüfen ob der Button überhaupt reagiert
-      alert('Saving: IP=' + ip);
+      console.log('Save clicked — IP: ' + ip + ', Key: ' + apiKey);
 
-      var payload = encodeURIComponent(JSON.stringify({ ip: ip, apiKey: key }));
+      var payload = encodeURIComponent(JSON.stringify({ ip: ip, apiKey: apiKey }));
 
-      // return_to für CloudPebble-Emulator, sonst direkt pebblejs://
+      // CloudPebble emulator uses return_to param; real device uses pebblejs://
       var match = location.search.match(/[?&]return_to=([^&]*)/);
-      var target = match
-        ? decodeURIComponent(match[1]) + '#' + payload
-        : 'pebblejs://close#' + payload;
-
-      location.href = target;
+      if (match) {
+        location.href = decodeURIComponent(match[1]) + '#' + payload;
+      } else {
+        location.href = 'pebblejs://close#' + payload;
       }
-    }
+    });
   </script>
 </body>
 </html>
