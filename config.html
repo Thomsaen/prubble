@@ -142,16 +142,21 @@
     })();
 
     function save() {
-      var data = JSON.stringify({
-        ip:     document.getElementById('ip').value.trim(),
-        apiKey: document.getElementById('key').value.trim()
-      });
-      var encoded = encodeURIComponent(data);
-      var m = location.href.match(/[?&]return_to=([^&#]+)/);
-      if (m) {
-        location.href = decodeURIComponent(m[1]) + '#' + encoded;
-      } else {
-        location.href = 'pebblejs://close#' + encoded;
+      var ip  = document.getElementById('ip').value.trim();
+      var key = document.getElementById('key').value.trim();
+
+      // Debug: Prüfen ob der Button überhaupt reagiert
+      alert('Speichere: IP=' + ip);
+
+      var payload = encodeURIComponent(JSON.stringify({ ip: ip, apiKey: key }));
+
+      // return_to für CloudPebble-Emulator, sonst direkt pebblejs://
+      var match = location.search.match(/[?&]return_to=([^&]*)/);
+      var target = match
+        ? decodeURIComponent(match[1]) + '#' + payload
+        : 'pebblejs://close#' + payload;
+
+      location.href = target;
       }
     }
   </script>
