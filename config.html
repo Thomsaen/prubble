@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-  <title>Prusa MK4+ Settings</title>
+  <title>Prubble Settings</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -14,7 +14,7 @@
       padding-bottom: 40px;
     }
 
-    /* Abschnitts-Überschriften in Orange */
+    /* Header*/
     .section-title {
       padding: 20px 16px 6px;
       font-size: 13px;
@@ -24,7 +24,7 @@
       letter-spacing: 0.8px;
     }
 
-    /* Karten-Container */
+    /* Cards-Container */
     .card {
       background: #2e2e2e;
       margin: 0 0;
@@ -32,7 +32,7 @@
       border-bottom: 1px solid #3a3a3a;
     }
 
-    /* Einzelne Zeile */
+    /* Single row */
     .row {
       display: flex;
       align-items: center;
@@ -58,7 +58,7 @@
     }
     .row input[type="text"]::placeholder { color: #666; }
 
-    /* Eingabefeld (volle Breite) */
+    /* input */
     .input-card {
       background: #2e2e2e;
       border-top: 1px solid #3a3a3a;
@@ -76,7 +76,7 @@
     }
     .input-field::placeholder { color: #666; }
 
-    /* Hilfstext */
+    /* help */
     .hint {
       padding: 8px 16px;
       font-size: 12px;
@@ -84,7 +84,7 @@
       line-height: 1.5;
     }
 
-    /* Speichern-Button */
+    /* save-Button */
     .btn-save {
       display: block;
       width: calc(100% - 32px);
@@ -104,23 +104,33 @@
   </style>
 </head>
 <body>
-  <div class="hdr"><h1>Prusa MK4+ Settings</h1></div>
-  <p class="sec">Verbindung</p>
+
+  <p class="section-title">Connection</p>
+
   <div class="card">
     <div class="row">
       <label>IP-Address</label>
-      <input id="ip" type="text" inputmode="decimal" placeholder="192.168.1.1">
-    </div>
-    <div class="row">
-      <label>API-Key</label>
-      <input id="key" type="text" placeholder="from Printer">
+      <input id="ip" type="text" inputmode="decimal" placeholder="192.168.178.100">
     </div>
   </div>
-  <p class="hint">Prusa Printer → Settings → Network → PrusaLink</p>
-  <button class="btn" onclick="save()">Save</button>
+  <p class="hint">Local IP-Address of your Prusa</p>
+
+  <p class="section-title">Authentification</p>
+
+  <div class="card">
+    <div class="row">
+      <label>API-Key</label>
+      <input id="key" type="text" placeholder="aus Druckermenü">
+    </div>
+  </div>
+  <p class="hint">
+    You find the key:<br>
+    Settings → Network → PrusaLink
+  </p>
+
+  <button class="btn-save" onclick="save()">Save</button>
 
   <script>
-    // Gespeicherte Werte aus URL laden (werden von index.js als #hash übergeben)
     (function() {
       var hash = location.hash.slice(1);
       if (!hash) return;
@@ -137,9 +147,7 @@
         apiKey: document.getElementById('key').value.trim()
       });
       var encoded = encodeURIComponent(data);
-
-      // CloudPebble hängt ?return_to=... an → auslesen
-      var m = location.href.match(/[?&]return_to=([^&#\s]+)/);
+      var m = location.href.match(/[?&]return_to=([^&#]+)/);
       if (m) {
         location.href = decodeURIComponent(m[1]) + '#' + encoded;
       } else {
