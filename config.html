@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <title>Prusa MK4+ Einstellungen</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+           background: #f2f2f7; }
+    .hdr { background: #fff; padding: 16px 20px;
+           border-bottom: 1px solid #c6c6c8; text-align: center; }
+    .hdr h1 { font-size: 17px; font-weight: 600; }
+    .sec { margin: 24px 16px 6px; font-size: 12px; color: #6c6c70;
+           text-transform: uppercase; letter-spacing: .5px; }
+    .card { background: #fff; border-radius: 10px; margin: 0 16px; overflow: hidden; }
+    .row { display: flex; align-items: center; padding: 13px 16px;
+           border-bottom: 1px solid #f2f2f7; }
+    .row:last-child { border-bottom: none; }
+    .row label { font-size: 15px; color: #1c1c1e; min-width: 100px; }
+    .row input { flex: 1; border: none; outline: none; font-size: 15px;
+                 text-align: right; color: #007aff; background: transparent; }
+    .row input::placeholder { color: #c7c7cc; }
+    .hint { margin: 8px 16px 0; font-size: 12px; color: #8e8e93; line-height: 1.5; }
+    .btn { display: block; margin: 28px 16px 40px; padding: 15px;
+           background: #007aff; color: #fff; border: none; border-radius: 12px;
+           font-size: 17px; font-weight: 600; width: calc(100% - 32px); cursor: pointer; }
+    .btn:active { background: #0062cc; }
+  </style>
+</head>
+<body>
+  <div class="hdr"><h1>Prusa MK4+ Einstellungen</h1></div>
+  <p class="sec">Verbindung</p>
+  <div class="card">
+    <div class="row">
+      <label>IP-Adresse</label>
+      <input id="ip" type="text" inputmode="decimal" placeholder="192.168.178.100">
+    </div>
+    <div class="row">
+      <label>API-Key</label>
+      <input id="key" type="text" placeholder="aus Druckermenü">
+    </div>
+  </div>
+  <p class="hint">Drucker → Einstellungen → Netzwerk → PrusaLink</p>
+  <button class="btn" onclick="save()">Speichern</button>
+
+  <script>
+    // Gespeicherte Werte aus URL laden (werden von index.js als #hash übergeben)
+    (function() {
+      var hash = location.hash.slice(1);
+      if (!hash) return;
+      try {
+        var cfg = JSON.parse(decodeURIComponent(hash));
+        if (cfg.ip)     document.getElementById('ip').value  = cfg.ip;
+        if (cfg.apiKey) document.getElementById('key').value = cfg.apiKey;
+      } catch(e) {}
+    })();
+
+    function save() {
+      var data = JSON.stringify({
+        ip:     document.getElementById('ip').value.trim(),
+        apiKey: document.getElementById('key').value.trim()
+      });
+      var encoded = encodeURIComponent(data);
+
+      // CloudPebble hängt ?return_to=... an → auslesen
+      var m = location.href.match(/[?&]return_to=([^&#\s]+)/);
+      if (m) {
+        location.href = decodeURIComponent(m[1]) + '#' + encoded;
+      } else {
+        location.href = 'pebblejs://close#' + encoded;
+      }
+    }
+  </script>
+</body>
+</html>
