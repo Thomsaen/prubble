@@ -3,135 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-  <title>Prubble Settings</title>
+  <title>Prusa MK4+ Settings</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
-      background: #1c1c1c;
-      color: #ffffff;
-      padding-bottom: 40px;
-    }
-
-    /* Header*/
-    .section-title {
-      padding: 20px 16px 6px;
-      font-size: 13px;
-      font-weight: 700;
-      color: #e8751a;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    /* Cards-Container */
-    .card {
-      background: #2e2e2e;
-      margin: 0 0;
-      border-top: 1px solid #3a3a3a;
-      border-bottom: 1px solid #3a3a3a;
-    }
-
-    /* Single row */
-    .row {
-      display: flex;
-      align-items: center;
-      padding: 14px 16px;
-      border-bottom: 1px solid #3a3a3a;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; background: #1c1c1c; color: #fff; padding-bottom: 40px; }
+    .section-title { padding: 20px 16px 6px; font-size: 13px; font-weight: 700; color: #e8751a; text-transform: uppercase; letter-spacing: 0.8px; }
+    .card { background: #2e2e2e; border-top: 1px solid #3a3a3a; border-bottom: 1px solid #3a3a3a; }
+    .row { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid #3a3a3a; }
     .row:last-child { border-bottom: none; }
-
-    .row label {
-      font-size: 15px;
-      color: #ffffff;
-      flex: 1;
-    }
-
-    .row input[type="text"] {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      font-size: 15px;
-      color: #ffffff;
-      text-align: right;
-    }
-    .row input[type="text"]::placeholder { color: #666; }
-
-    /* input */
-    .input-card {
-      background: #2e2e2e;
-      border-top: 1px solid #3a3a3a;
-      border-bottom: 1px solid #3a3a3a;
-    }
-    .input-field {
-      display: block;
-      width: 100%;
-      background: transparent;
-      border: none;
-      outline: none;
-      font-size: 15px;
-      color: #ffffff;
-      padding: 14px 16px;
-    }
-    .input-field::placeholder { color: #666; }
-
-    /* help */
-    .hint {
-      padding: 8px 16px;
-      font-size: 12px;
-      color: #888;
-      line-height: 1.5;
-    }
-
-    /* save-Button */
-    .btn-save {
-      display: block;
-      width: calc(100% - 32px);
-      margin: 28px 16px 0;
-      padding: 15px;
-      background: #e8751a;
-      color: #ffffff;
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-    .btn-save:active { background: #c9601a; }
+    .row label { font-size: 15px; color: #fff; flex: 1; white-space: nowrap; margin-right: 12px; }
+    .row input[type="text"] { flex: 1; background: transparent; border: none; outline: none; font-size: 15px; color: #fff; text-align: right; min-width: 0; }
+    .row input[type="text"]::placeholder { color: #555; }
+    .hint { padding: 8px 16px; font-size: 12px; color: #888; line-height: 1.5; }
+    /* Debug-Box */
+    #debug { margin: 16px; padding: 12px; background: #111; border: 1px solid #444; border-radius: 6px; font-size: 11px; color: #aaa; font-family: monospace; white-space: pre-wrap; word-break: break-all; }
+    #btn-save { display: block; width: calc(100% - 32px); margin: 16px 16px 0; padding: 15px; background: #e8751a; color: #fff; border: none; border-radius: 6px; font-size: 15px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+    #btn-save:active { background: #c9601a; }
   </style>
 </head>
 <body>
 
   <p class="section-title">Connection</p>
-
   <div class="card">
     <div class="row">
-      <label>IP-Address</label>
-      <input id="ip" type="text" inputmode="decimal" placeholder="192.168.1.100">
+      <label for="ip">IP Address</label>
+      <input id="ip" type="text" inputmode="decimal" placeholder="192.168.178.100">
     </div>
   </div>
-  <p class="hint">Local IP-Address of your Prusa</p>
 
-  <p class="section-title">Authentification</p>
-
+  <p class="section-title">Authentication</p>
   <div class="card">
     <div class="row">
-      <label>API-Key</label>
-      <input id="key" type="text" placeholder="from printer settings">
+      <label for="key">API Key</label>
+      <input id="key" type="text" placeholder="from printer menu">
     </div>
   </div>
-  <p class="hint">
-    You find the key here:<br>
-    Settings → Network → PrusaLink
-  </p>
+
+  <!-- Debug output — remove after fix -->
+  <div id="debug">Waiting for SAVE click...</div>
 
   <button id="btn-save">SAVE</button>
 
   <script>
-    // Load existing settings from hash
+    var dbg = document.getElementById('debug');
+
+    function log(msg) {
+      dbg.textContent += '\n' + msg;
+      console.log('[CONFIG] ' + msg);
+    }
+
+    // Log current URL on page load
+    log('href:   ' + location.href);
+    log('search: ' + location.search);
+    log('hash:   ' + location.hash);
+
+    // Load existing settings
     (function () {
       var hash = location.hash.slice(1);
       if (!hash) return;
@@ -139,27 +65,35 @@
         var cfg = JSON.parse(decodeURIComponent(hash));
         if (cfg.ip)     document.getElementById('ip').value  = cfg.ip;
         if (cfg.apiKey) document.getElementById('key').value = cfg.apiKey;
-      } catch (e) {
-        console.log('Config load error: ' + e);
-      }
+        log('Loaded: ip=' + cfg.ip);
+      } catch (e) { log('Load error: ' + e); }
     })();
 
-    // Attach save handler via addEventListener — avoids global scope issues
     document.getElementById('btn-save').addEventListener('click', function () {
       var ip     = document.getElementById('ip').value.trim();
       var apiKey = document.getElementById('key').value.trim();
 
-      console.log('Save clicked — IP: ' + ip + ', Key: ' + apiKey);
+      log('--- SAVE CLICKED ---');
+      log('ip: ' + ip);
+      log('apiKey: ' + apiKey);
 
       var payload = encodeURIComponent(JSON.stringify({ ip: ip, apiKey: apiKey }));
+      log('payload: ' + payload);
 
-      // CloudPebble emulator uses return_to param; real device uses pebblejs://
       var match = location.search.match(/[?&]return_to=([^&]*)/);
+      log('return_to match: ' + (match ? match[1] : 'NOT FOUND'));
+
+      var target;
       if (match) {
-        location.href = decodeURIComponent(match[1]) + '#' + payload;
+        target = decodeURIComponent(match[1]) + '#' + payload;
       } else {
-        location.href = 'pebblejs://close#' + payload;
+        target = 'pebblejs://close#' + payload;
       }
+
+      log('Navigating to: ' + target);
+
+      // Small delay so the log is visible before navigation
+      setTimeout(function () { location.href = target; }, 300);
     });
   </script>
 </body>
